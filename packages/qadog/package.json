@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "agent": "npm run build && node dist/agent.js",
-    "instruct": "npm run build && node dist/instructor.js"
+    "dev": "npm run build && node dist/index.js",
+    "instruct": "npm run build && node dist/index.js instruct",
+    "inspect": "npm run build && node dist/index.js inspect"
   },
   "keywords": [],
   "author": "",

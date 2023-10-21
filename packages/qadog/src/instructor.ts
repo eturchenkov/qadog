@@ -1,4 +1,3 @@
-require("dotenv").config();
 import { readFile, writeFile } from "fs/promises";
 import { gpt } from "./gpt";
 
@@ -24,12 +23,18 @@ User can login to website. To do this he type his email to email field, type his
   return response.split("\n");
 };
 
-(async () => {
-  const data = await readFile("src/user-stories.json", { encoding: "utf8" });
+export const buildInstructions = async (appName: string) => {
+  const data = await readFile(`files/stories/${appName}.json`, {
+    encoding: "utf8",
+  });
   const userStories = JSON.parse(data)?.userStories ?? [];
 
   const instructions = await getInstructions(userStories[0]);
-  writeFile("src/instructions.json", JSON.stringify({ instructions }), {
-    encoding: "utf8",
-  });
-})();
+  writeFile(
+    `files/reports/${appName}/instructions.json`,
+    JSON.stringify({ instructions }),
+    {
+      encoding: "utf8",
+    }
+  );
+};

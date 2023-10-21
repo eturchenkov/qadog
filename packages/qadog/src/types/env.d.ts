@@ -1,7 +1,10 @@
 declare global {
   namespace NodeJS {
-    interface ProcessEnv {
-      OPENAI_API_KEY: string;
+    interface Process {
+      env: {
+        OPENAI_API_KEY: string;
+      };
+      argv: [string, string, "instruct" | "inspect" | undefined];
     }
   }
 }

@@ -1,4 +1,3 @@
-require("dotenv").config();
 import { readFile } from "fs/promises";
 import puppeteer from "puppeteer";
 import { gpt } from "./gpt";
@@ -9,7 +8,7 @@ const findQuery = async (
   instruction: string
 ): Promise<string> => {
   const response = await gpt(
-    `You are HTML DOM element finder. 
+    `You are HTML DOM element finder.
 You have a html body:
 -----
 ${body}
@@ -27,14 +26,16 @@ Response should be a one line.
   return response;
 };
 
-(async () => {
-  const data = await readFile("src/instructions.json", { encoding: "utf8" });
+export const inspectStory = async (appName: string, url: string) => {
+  const data = await readFile(`files/reports/${appName}/instructions.json`, {
+    encoding: "utf8",
+  });
   const instructions = JSON.parse(data)?.instructions ?? [];
 
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 800 });
-  await page.goto("http://localhost:3000/");
+  await page.goto(url);
 
   let element: ElementHandle | null = null;
   for (const instruction of instructions) {
@@ -48,4 +49,4 @@ Response should be a one line.
   }
 
   await browser.close();
-})();
+};
