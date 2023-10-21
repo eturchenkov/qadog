@@ -2,6 +2,7 @@ require("dotenv").config();
 import { readFile } from "fs/promises";
 import puppeteer from "puppeteer";
 import { gpt } from "./gpt";
+import type { ElementHandle } from "puppeteer";
 
 const findQuery = async (
   body: string,
@@ -33,11 +34,18 @@ Response should be a one line.
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 800 });
-
   await page.goto("http://localhost:3000/");
-  const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-  const query = await findQuery(bodyHTML, instructions[0]);
-  console.log(query);
+
+  let element: ElementHandle | null = null;
+  for (const instruction of instructions) {
+    const bodyHTML = await page.evaluate(() => document.body.innerHTML);
+    const query = await findQuery(bodyHTML, instructions[0]);
+    console.log(query);
+
+    if (instruction.startsWith("[find]")) {
+      element = await page.waitForSelector(query);
+    }
+  }
 
   await browser.close();
 })();
