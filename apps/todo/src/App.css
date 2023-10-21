@@ -1,0 +1,20 @@
+.App {
+  text-align: center;
+}
+.ReactModal__Overlay.ReactModal__Overlay--after-open {
+  background: #33333357 !important;
+}
+ul {
+  padding: 0px;
+}
+.d-flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0px;
+}
+.d-flex-space-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

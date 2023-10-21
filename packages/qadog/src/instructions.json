@@ -1,0 +1,8 @@
+{
+  "instructions": [
+    "[find] input field for task description",
+    "[type] task description",
+    "[find] \"ADD TODO\" button",
+    "[click] \"ADD TODO\" button",
+  ]
+}

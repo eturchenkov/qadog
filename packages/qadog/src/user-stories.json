@@ -1,0 +1,5 @@
+{
+  "userStories": [
+    "User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list."
+  ]
+}

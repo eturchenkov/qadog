@@ -1,0 +1,23 @@
+{
+  "name": "qadog",
+  "version": "0.0.0",
+  "description": "QA agent that follows user stories",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "agent": "npm run build && node dist/agent.js",
+    "instruct": "npm run build && node dist/instructor.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.8.7",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "openai": "^4.12.4",
+    "puppeteer": "^21.3.8"
+  }
+}
