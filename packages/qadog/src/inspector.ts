@@ -13,7 +13,7 @@ You have a html body:
 -----
 ${body}
 -----
-You should find element selector for document.querySelector function that according description below:
+You should find element selector (as string) for document.querySelector function that according description below:
 -----
 ${instruction}
 -----
@@ -23,6 +23,7 @@ Response should be a one line.
 `,
     0.3
   );
+  console.log(`find response: ${response}`);
   return response;
 };
 
@@ -38,13 +39,30 @@ export const inspectStory = async (appName: string, url: string) => {
   await page.goto(url);
 
   let element: ElementHandle | null = null;
+  let i: number = 1;
   for (const instruction of instructions) {
     const bodyHTML = await page.evaluate(() => document.body.innerHTML);
-    const query = await findQuery(bodyHTML, instructions[0]);
-    console.log(query);
 
     if (instruction.startsWith("[find]")) {
+      const query = await findQuery(bodyHTML, instruction);
+      console.log(`find! ${query}`);
       element = await page.waitForSelector(query);
+    } else if (instruction.startsWith("[click]")) {
+      console.log(`click! ${instruction}, ${Boolean(element)}`);
+      await element?.click();
+      await page.screenshot({
+        path: `files/reports/${appName}/${i}.jpg`,
+        type: "jpeg",
+      });
+      i++;
+    } else if (instruction.startsWith("[type]")) {
+      console.log(`type! ${instruction}, ${Boolean(element)}`);
+      await element?.type(instruction.replace("[type]", ""));
+      await page.screenshot({
+        path: `files/reports/${appName}/${i}.jpg`,
+        type: "jpeg",
+      });
+      i++;
     }
   }
 
