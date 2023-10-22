@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import puppeteer from "puppeteer";
 import { gpt } from "./gpt";
-import type { ElementHandle } from "puppeteer";
+import type { Page } from "puppeteer";
 
 const findQuery = async (
   body: string,
@@ -38,7 +38,7 @@ export const inspectStory = async (appName: string, url: string) => {
   await page.setViewport({ width: 1080, height: 800 });
   await page.goto(url);
 
-  let element: ElementHandle | null = null;
+  let element: string = "";
   let i: number = 1;
   for (const instruction of instructions) {
     const bodyHTML = await page.evaluate(() => document.body.innerHTML);
@@ -46,25 +46,48 @@ export const inspectStory = async (appName: string, url: string) => {
     if (instruction.startsWith("[find]")) {
       const query = await findQuery(bodyHTML, instruction);
       console.log(`find! ${query}`);
-      element = await page.waitForSelector(query);
-    } else if (instruction.startsWith("[click]")) {
+      element = (await page.waitForSelector(query)) ? query : "";
+    } else if (element && instruction.startsWith("[click]")) {
       console.log(`click! ${instruction}, ${Boolean(element)}`);
-      await element?.click();
+
+      const removeOutline = await outlineElement(page, element);
+      await page.click(element);
       await page.screenshot({
         path: `files/reports/${appName}/${i}.jpg`,
         type: "jpeg",
       });
+      await removeOutline();
       i++;
-    } else if (instruction.startsWith("[type]")) {
+    } else if (element && instruction.startsWith("[type]")) {
       console.log(`type! ${instruction}, ${Boolean(element)}`);
-      await element?.type(instruction.replace("[type]", ""));
+
+      const removeOutline = await outlineElement(page, element);
+      await page.type(element, instruction.replace("[type]", ""));
       await page.screenshot({
         path: `files/reports/${appName}/${i}.jpg`,
         type: "jpeg",
       });
+      await removeOutline();
       i++;
     }
   }
 
   await browser.close();
+};
+
+const outlineElement = async (
+  page: Page,
+  element: string
+): Promise<Function> => {
+  // add storing prev outline style
+  await page.evaluate((element) => {
+    const el = document.querySelector(element) as HTMLElement;
+    if (el) el.style.outline = "2px solid red";
+  }, element);
+  return async () => {
+    await page.evaluate((element) => {
+      const el = document.querySelector(element) as HTMLElement;
+      if (el) el.style.outline = "";
+    }, element);
+  };
 };
