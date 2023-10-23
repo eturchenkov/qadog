@@ -2,4 +2,5 @@
 /dist
 /files/*
 !/files/stories
+*.jpg
 .env
