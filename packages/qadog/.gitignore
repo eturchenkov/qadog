@@ -1,6 +1,4 @@
 /node_modules
 /dist
-/files/*
-!/files/stories
 *.jpg
 .env

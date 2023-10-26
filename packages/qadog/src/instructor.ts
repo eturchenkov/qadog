@@ -1,7 +1,8 @@
 import { readFile, writeFile } from "fs/promises";
 import { gpt } from "./gpt";
+import type { Epic } from "./types/epic";
 
-const getInstructions = async (userStory: string): Promise<string[]> => {
+const getInstruction = async (userStory: string): Promise<string[]> => {
   const response = await gpt(
     `You have a user story:
 -----
@@ -29,7 +30,7 @@ export const buildInstructions = async (appName: string) => {
   });
   const userStories = JSON.parse(data)?.userStories ?? [];
 
-  const instructions = await getInstructions(userStories[0]);
+  const instructions = await getInstruction(userStories[0]);
   writeFile(
     `files/reports/${appName}/instructions.json`,
     JSON.stringify({ instructions }),
@@ -37,4 +38,24 @@ export const buildInstructions = async (appName: string) => {
       encoding: "utf8",
     }
   );
+};
+
+export const addInstruction = async (si: number): Promise<Epic> => {
+  const data = await readFile(`files/todo/stories.json`, {
+    encoding: "utf8",
+  });
+  const epic = JSON.parse(data) as Epic;
+
+  const steps = await getInstruction(epic.stories[si].text);
+  epic.stories[si].instructions = [
+    ...epic.stories[si].instructions,
+    {
+      steps,
+      reports: [],
+    },
+  ];
+  await writeFile(`files/todo/stories.json`, JSON.stringify(epic), {
+    encoding: "utf8",
+  });
+  return epic;
 };

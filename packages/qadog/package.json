@@ -7,7 +7,8 @@
     "build": "tsc",
     "dev": "npm run build && node dist/index.js",
     "instruct": "npm run build && node dist/index.js instruct",
-    "inspect": "npm run build && node dist/index.js inspect"
+    "inspect": "npm run build && node dist/index.js inspect",
+    "srv": "npm run build && node dist/srv.js"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +18,12 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "openai": "^4.12.4",
     "puppeteer": "^21.3.8"
   }

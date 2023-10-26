@@ -1,7 +1,8 @@
-import { readFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import puppeteer from "puppeteer";
 import { gpt } from "./gpt";
 import type { Page } from "puppeteer";
+import type { Epic } from "./types/epic";
 
 const findQuery = async (
   body: string,
@@ -90,4 +91,22 @@ const outlineElement = async (
       if (el) el.style.outline = "";
     }, element);
   };
+};
+
+export const addReport = async (si: number, ii: number): Promise<Epic> => {
+  const data = await readFile(`stories/todo/stories.json`, {
+    encoding: "utf8",
+  });
+  const epic = JSON.parse(data) as Epic;
+
+  // buildReport(epic.stories[si].instructions[ii].steps);
+  epic.stories[si].instructions[ii].reports = [
+    ...epic.stories[si].instructions[ii].reports,
+    { id: "new" },
+  ];
+  // write report file
+  await writeFile(`stories/todo/stories.json`, JSON.stringify(epic), {
+    encoding: "utf8",
+  });
+  return epic; // and report
 };
