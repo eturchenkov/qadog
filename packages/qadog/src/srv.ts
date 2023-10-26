@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.get("/stories", async (_, res) => {
-  const epic = await readFile(`stories/todo/stories.json`, {
+  const epic = await readFile(`files/todo/stories.json`, {
     encoding: "utf8",
   });
   res.send(epic);
@@ -28,4 +28,4 @@ app.post("/stories/:si/instructions/:ii/reports", async (req, res) => {
   res.json(await addReport(si, ii));
 });
 
-app.listen(process.env.PORT || 3000);
+app.listen(process.env.PORT || 5000);

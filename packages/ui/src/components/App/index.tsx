@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { format } from "date-fns/esm/fp";
 import { service } from "@/service";
 import { useStore } from "@/store";
 import { Topbar } from "@/components/Topbar";
@@ -33,17 +34,31 @@ export const App = () => {
                   <div key={si} className="p-2">
                     <p>{story.text}</p>
                     {story.instructions.map((instruction, ii) => (
-                      <p key={ii} className="p-4">
-                        {instruction.steps.map((step, i) => (
-                          <span key={i}>
-                            {step}
-                            <br />
-                          </span>
+                      <div key={ii} className="p-4">
+                        <p className="mb-2">
+                          {instruction.steps.map((step, i) => (
+                            <span key={i}>
+                              {step}
+                              <br />
+                            </span>
+                          ))}
+                        </p>
+                        {instruction.reports.map((report, ri) => (
+                          <p key={ri} className="pl-2">
+                            {dateFormat(report.createdAt)}
+                          </p>
                         ))}
-                        <button className="mt-3 btn btn-sm btn-outline btn-success normal-case">
+                        <button
+                          className="mt-3 btn btn-sm btn-outline btn-success normal-case"
+                          onClick={() =>
+                            service
+                              .addReport(si, ii)
+                              .then((epic) => mutateStore(M.updateEpic(epic)))
+                          }
+                        >
                           Generate report
                         </button>
-                      </p>
+                      </div>
                     ))}
                     <button
                       className="btn btn-sm btn-outline normal-case"
@@ -70,5 +85,7 @@ export const App = () => {
     </div>
   );
 };
+
+const dateFormat = format("HH:mm:ss MMM d");
 
 export default App;

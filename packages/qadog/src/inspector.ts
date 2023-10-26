@@ -1,8 +1,10 @@
-import { readFile, writeFile } from "fs/promises";
 import puppeteer from "puppeteer";
+import { readFile, writeFile, mkdir } from "fs/promises";
 import { gpt } from "./gpt";
+import { genId } from "./utils";
 import type { Page } from "puppeteer";
 import type { Epic } from "./types/epic";
+import type { Report } from "./types/report";
 
 const findQuery = async (
   body: string,
@@ -28,11 +30,17 @@ Response should be a one line.
   return response;
 };
 
-export const inspectStory = async (appName: string, url: string) => {
-  const data = await readFile(`files/reports/${appName}/instructions.json`, {
+export const inspectStory = async (
+  appName: string,
+  si: number,
+  ii: number,
+  url: string
+): Promise<{ reportId: string; report: Report }> => {
+  const data = await readFile(`files/${appName}/stories.json`, {
     encoding: "utf8",
   });
-  const instructions = JSON.parse(data)?.instructions ?? [];
+  const epic = JSON.parse(data) as Epic;
+  const instructions = epic.stories[si].instructions[ii].steps;
 
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
@@ -41,39 +49,62 @@ export const inspectStory = async (appName: string, url: string) => {
 
   let element: string = "";
   let i: number = 1;
+  const report: Report = { steps: [] };
+  const reportId = genId();
+  await mkdir(`files/${appName}/reports/${reportId}`);
   for (const instruction of instructions) {
     const bodyHTML = await page.evaluate(() => document.body.innerHTML);
 
     if (instruction.startsWith("[find]")) {
       const query = await findQuery(bodyHTML, instruction);
-      console.log(`find! ${query}`);
       element = (await page.waitForSelector(query)) ? query : "";
-    } else if (element && instruction.startsWith("[click]")) {
-      console.log(`click! ${instruction}, ${Boolean(element)}`);
 
       const removeOutline = await outlineElement(page, element);
+      await page.screenshot({
+        path: `files/${appName}/reports/${reportId}/${i}.jpg`,
+        type: "jpeg",
+      });
+      await removeOutline();
+      report.steps.push({
+        type: "find",
+        body: bodyHTML,
+        selector: element,
+        screenshot: `${i}.jpg`,
+      });
+    } else if (element && instruction.startsWith("[click]")) {
       await page.click(element);
       await page.screenshot({
-        path: `files/reports/${appName}/${i}.jpg`,
+        path: `files/${appName}/reports/${reportId}/${i}.jpg`,
         type: "jpeg",
       });
-      await removeOutline();
-      i++;
+      report.steps.push({
+        type: "click",
+        screenshot: `${i}.jpg`,
+      });
     } else if (element && instruction.startsWith("[type]")) {
-      console.log(`type! ${instruction}, ${Boolean(element)}`);
-
-      const removeOutline = await outlineElement(page, element);
-      await page.type(element, instruction.replace("[type]", ""));
+      const text = instruction.replace("[type]", "");
+      await page.type(element, text);
       await page.screenshot({
-        path: `files/reports/${appName}/${i}.jpg`,
+        path: `files/${appName}/reports/${reportId}/${i}.jpg`,
         type: "jpeg",
       });
-      await removeOutline();
-      i++;
+      report.steps.push({
+        type: "type",
+        text,
+        screenshot: `${i}.jpg`,
+      });
     }
+    i++;
+    console.log(i);
   }
 
   await browser.close();
+  await writeFile(
+    `files/${appName}/reports/${reportId}/report.json`,
+    JSON.stringify(report),
+    { encoding: "utf8" }
+  );
+  return { reportId, report };
 };
 
 const outlineElement = async (
@@ -94,19 +125,23 @@ const outlineElement = async (
 };
 
 export const addReport = async (si: number, ii: number): Promise<Epic> => {
-  const data = await readFile(`stories/todo/stories.json`, {
+  const data = await readFile(`files/todo/stories.json`, {
     encoding: "utf8",
   });
   const epic = JSON.parse(data) as Epic;
+  const { reportId, report } = await inspectStory(
+    "todo",
+    si,
+    ii,
+    "http://localhost:3000"
+  );
 
-  // buildReport(epic.stories[si].instructions[ii].steps);
   epic.stories[si].instructions[ii].reports = [
     ...epic.stories[si].instructions[ii].reports,
-    { id: "new" },
+    { id: reportId, createdAt: new Date().getTime() },
   ];
-  // write report file
-  await writeFile(`stories/todo/stories.json`, JSON.stringify(epic), {
+  await writeFile(`files/todo/stories.json`, JSON.stringify(epic), {
     encoding: "utf8",
   });
-  return epic; // and report
+  return epic;
 };

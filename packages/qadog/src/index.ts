@@ -11,6 +11,6 @@ const url = "http://localhost:3000/";
     await buildInstructions(appName);
   }
   if (arg !== "instruct") {
-    await inspectStory(appName, url);
+    // await inspectStory(appName, url);
   }
 })();

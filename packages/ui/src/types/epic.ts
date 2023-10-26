@@ -15,4 +15,5 @@ type Instruction = {
 
 type Report = {
   id: string;
+  createdAt: number;
 };
