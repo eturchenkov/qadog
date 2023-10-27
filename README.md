@@ -5,3 +5,27 @@
 Testing of products is very expensive, hard to maintain, and takes a lot of time and effort. But for now generative AI makes possible new approaches to ensure quality of software products. An exciting way is to generate a comprehensive test suite from user stories, and then execute it. So that we can get test reports of the entire product. Such reports can be used for autonomous bug fixing in the future.
 
 This project is in the research stage.
+
+### Getting started
+
+1. Clone this repo
+```
+git clone git@github.com:eturchenkov/qadog.git
+```
+2. Start demo todo app 
+```
+cd apps/todo
+npm i && npm start
+```
+3. Add your OpenAI api key to .env file, use .env.sample for reference
+```
+cd package/qadog
+touch .env
+```
+4. Start qadog server and go to [http://localhost:5000](http://localhost:5000)
+```
+cd package/qadog
+npm i && npm run srv
+```
+5. Press "Generate report" button to build new test report
+
