@@ -49,8 +49,8 @@ export const inspectStory = async (
 
   let element: string = "";
   let i: number = 1;
-  const report: Report = { steps: [] };
   const reportId = genId();
+  const report: Report = { steps: [], id: reportId };
   await mkdir(`files/${appName}/reports/${reportId}`);
   for (const instruction of instructions) {
     const bodyHTML = await page.evaluate(() => document.body.innerHTML);
@@ -129,12 +129,7 @@ export const addReport = async (si: number, ii: number): Promise<Epic> => {
     encoding: "utf8",
   });
   const epic = JSON.parse(data) as Epic;
-  const { reportId, report } = await inspectStory(
-    "todo",
-    si,
-    ii,
-    "http://localhost:3000"
-  );
+  const { reportId, report } = await inspectStory("todo", si, ii, epic.url);
 
   epic.stories[si].instructions[ii].reports = [
     ...epic.stories[si].instructions[ii].reports,

@@ -19,22 +19,23 @@ export const App = () => {
     }
   }, []);
 
-  const { epic } = store;
+  const { epic, report } = store;
 
   return (
     <div className="w-screen h-screen relative">
       <Topbar />
       <div className="w-full h-[calc(100vh-3.5rem)] flex">
-        <div className="flex-1 grow-[2]">
+        <div className="flex-1 grow-[1]">
           <div className="h-full text-left overflow-y-auto border-0 border-r-2 border-e-gray-900">
             {epic !== null && (
               <div className="p-4">
-                <p className="p-2">{epic.userGoal}</p>
+                <p className="p-2">Url: {epic.url}</p>
+                <p className="p-2">Goal: {epic.userGoal}</p>
                 {epic.stories.map((story, si) => (
                   <div key={si} className="p-2">
                     <p>{story.text}</p>
                     {story.instructions.map((instruction, ii) => (
-                      <div key={ii} className="p-4">
+                      <div key={ii} className="p-4 pl-8">
                         <p className="mb-2">
                           {instruction.steps.map((step, i) => (
                             <span key={i}>
@@ -44,7 +45,17 @@ export const App = () => {
                           ))}
                         </p>
                         {instruction.reports.map((report, ri) => (
-                          <p key={ri} className="pl-2">
+                          <p
+                            key={ri}
+                            className="pl-2 cursor-pointer"
+                            onClick={() =>
+                              service
+                                .getReport(report.id)
+                                .then((report) =>
+                                  mutateStore(M.updateReport(report))
+                                )
+                            }
+                          >
                             {dateFormat(report.createdAt)}
                           </p>
                         ))}
@@ -76,9 +87,18 @@ export const App = () => {
             )}
           </div>
         </div>
-        <div className="flex-1 grow-[3]">
+        <div className="flex-1 grow-[2]">
           <div className="h-full text-left overflow-y-auto">
-            <div className="p-4"></div>
+            <div className="p-4 m-auto max-w-2xl">
+              {report.steps.map((step, si) => (
+                <div key={si}>
+                  <p>{step.type}</p>
+                  <img
+                    src={`http://localhost:5000/${report.id}/${step.screenshot}`}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

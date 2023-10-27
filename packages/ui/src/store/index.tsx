@@ -7,7 +7,7 @@ export const StoreContext = createContext<ContextType | null>(null);
 export const StoreProvider: FC<{ children: ReactElement }> = ({ children }) => {
   const [store, mutateStore] = useState<Store>({
     epic: null,
-    report: [],
+    report: { steps: [] },
   });
 
   return (

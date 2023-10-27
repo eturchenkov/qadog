@@ -1,4 +1,5 @@
 export type Epic = {
+  url: string;
   userGoal: string;
   stories: Story[];
 };
