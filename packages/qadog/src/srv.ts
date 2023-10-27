@@ -9,7 +9,8 @@ import { addReport } from "./inspector";
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use("/", express.static("files/todo/reports"));
+app.use("/", express.static("public"));
+app.use("/reports/", express.static("files/todo/reports"));
 
 app.get("/stories", async (_, res) => {
   const epic = await readFile(`files/todo/stories.json`, {

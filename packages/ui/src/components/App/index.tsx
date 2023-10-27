@@ -94,7 +94,7 @@ export const App = () => {
                 <div key={si}>
                   <p>{step.type}</p>
                   <img
-                    src={`http://localhost:5000/${report.id}/${step.screenshot}`}
+                    src={`http://localhost:5000/reports/${report.id}/${step.screenshot}`}
                   />
                 </div>
               ))}
