@@ -23,19 +23,28 @@ export const updateEpic =
 
 export const updateReport =
   (report: Report, si: number, ii: number, ri: number) =>
-  (store: Store): Store => {
-    store.epic.stories[si].instructions[ii].reports[ri].selected = true;
-    return {
-      ...store,
-      report: {
-        ...report,
-        steps: report.steps.map((step) => ({
-          ...step,
-          folded: true,
+  (store: Store): Store => ({
+    epic: {
+      ...store.epic,
+      stories: store.epic.stories.map((story, s_i) => ({
+        ...story,
+        instructions: story.instructions.map((instruction, i_i) => ({
+          ...instruction,
+          reports: instruction.reports.map((report, r_i) => ({
+            ...report,
+            selected: s_i === si && i_i === ii && r_i === ri,
+          })),
         })),
-      },
-    };
-  };
+      })),
+    },
+    report: {
+      ...report,
+      steps: report.steps.map((step) => ({
+        ...step,
+        folded: true,
+      })),
+    },
+  });
 
 export const toggleReportStep =
   (si: number) =>

@@ -94,7 +94,6 @@ export const inspectStory = async (
       });
     }
     i++;
-    console.log(i);
   }
 
   await browser.close();
