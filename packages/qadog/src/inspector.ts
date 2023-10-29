@@ -67,7 +67,6 @@ export const inspectStory = async (
       await removeOutline();
       report.steps.push({
         type: "find",
-        body: bodyHTML,
         selector: element,
         screenshot: `${i}.jpg`,
       });

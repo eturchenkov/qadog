@@ -1,6 +1,6 @@
 {
   "url": "http://localhost:3000",
-  "userGoal": "User make a todo list",
+  "userGoal": "User makes a todo list",
   "stories": [
     {
       "text": "User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list.",
@@ -21,13 +21,17 @@
         },
         {
           "steps": [
-            "[find] input field",
+            "[find] input field for task description",
             "[type] task description",
             "[find] \"ADD TODO\" button",
-            "[click] \"ADD TODO\" button",
-            "[verify] new task appears in todo list"
+            "[click] \"ADD TODO\" button"
           ],
-          "reports": []
+          "reports": [
+            {
+              "id": "v89jk47jjn",
+              "createdAt": 1698603221290
+            }
+          ]
         }
       ]
     }

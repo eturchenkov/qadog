@@ -6,7 +6,6 @@ export type Report = {
 type Step =
   | {
       type: "find";
-      body: string;
       selector: string;
       screenshot: string;
     }
