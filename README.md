@@ -1,5 +1,7 @@
 **qadog** is a QA agent that generates test reports based on user stories.
 
+![Screenshot from 2023-10-30 11-23-50](https://github.com/eturchenkov/qadog/assets/49445761/b5e265ad-6206-4bd3-8438-029a2a318160)
+
 ## Motivation
 
 Testing of products is very expensive, hard to maintain, and takes a lot of time and effort. But for now generative AI makes possible new approaches to ensure quality of software products. An exciting way is to generate a comprehensive test suite from user stories, and then execute it. So that we can get test reports of the entire product. Such reports can be used for autonomous bug fixing in the future.
