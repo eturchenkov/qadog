@@ -1,6 +1,6 @@
 **qadog** is a QA agent that generates test reports based on user stories.
 
-![Screenshot from 2023-10-30 11-23-50](https://github.com/eturchenkov/qadog/assets/49445761/b5e265ad-6206-4bd3-8438-029a2a318160)
+![Screenshot from 2023-10-30 11-23-50](https://github.com/eturchenkov/qadog/assets/49445761/e7f21217-d842-486a-b53e-0adbe344e3f5)
 
 ## Motivation
 
