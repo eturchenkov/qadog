@@ -19,12 +19,12 @@ npm i && npm start
 ```
 3. Add your OpenAI api key to .env file, use .env.sample for reference
 ```
-cd package/qadog
+cd packages/qadog
 touch .env
 ```
 4. Start qadog server and go to [http://localhost:5000](http://localhost:5000)
 ```
-cd package/qadog
+cd packages/qadog
 npm i && npm run srv
 ```
 5. Press "Generate report" button to build new test report

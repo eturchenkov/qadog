@@ -51,7 +51,7 @@ export const inspectStory = async (
   let i: number = 1;
   const reportId = genId();
   const report: Report = { steps: [], id: reportId };
-  await mkdir(`files/${appName}/reports/${reportId}`);
+  await mkdir(`files/${appName}/reports/${reportId}`, { recursive: true });
   for (const instruction of instructions) {
     const bodyHTML = await page.evaluate(() => document.body.innerHTML);
 
