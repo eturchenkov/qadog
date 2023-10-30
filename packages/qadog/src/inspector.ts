@@ -45,6 +45,8 @@ export const inspectStory = async (
   const browser = await puppeteer.launch({ headless: "new" });
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 800 });
+  let logs: string[] = [];
+  page.on("console", (msg) => (logs = [...logs, msg.text()]));
   await page.goto(url);
 
   let element: string = "";
@@ -69,6 +71,7 @@ export const inspectStory = async (
         type: "find",
         selector: element,
         screenshot: `${i}.jpg`,
+        logs,
       });
     } else if (element && instruction.startsWith("[click]")) {
       await page.click(element);
@@ -79,6 +82,7 @@ export const inspectStory = async (
       report.steps.push({
         type: "click",
         screenshot: `${i}.jpg`,
+        logs,
       });
     } else if (element && instruction.startsWith("[type]")) {
       const text = instruction.replace("[type]", "");
@@ -91,9 +95,11 @@ export const inspectStory = async (
         type: "type",
         text,
         screenshot: `${i}.jpg`,
+        logs,
       });
     }
     i++;
+    logs = [];
   }
 
   await browser.close();

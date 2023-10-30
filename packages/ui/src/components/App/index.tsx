@@ -118,7 +118,7 @@ export const App = () => {
                   className="mb-4 border border-slate-500 rounded-lg"
                 >
                   <p
-                    className="p-2 cursor-pointer"
+                    className="p-2 relative cursor-pointer"
                     onClick={() => mutateStore(M.toggleReportStep(si))}
                   >
                     <span
@@ -133,6 +133,11 @@ export const App = () => {
                     >
                       {step.type}
                     </span>
+                    {step.logs.length > 0 && (
+                      <span className="py-0.5 px-2 absolute right-2 text-sm font-normal text-gray-300 bg-sky-900 rounded-lg">
+                        {step.logs.length} log{step.logs.length > 1 && "s"}
+                      </span>
+                    )}
                     {step.type === "find" && <span>{step.selector}</span>}
                     {step.type === "type" && <span>{step.text}</span>}
                   </p>
@@ -142,6 +147,19 @@ export const App = () => {
                         className="w-4/5 m-auto p-4"
                         src={`http://localhost:5000/reports/${report.id}/${step.screenshot}`}
                       />
+                      {step.logs.length > 0 && (
+                        <div className="px-12 pb-4">
+                          {step.logs.map((log, i) => (
+                            <span
+                              key={i}
+                              className="text-sm text-slate-400 line-clamp-1 hover:text-slate-300 cursor-pointer"
+                            >
+                              {log}
+                              <br />
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

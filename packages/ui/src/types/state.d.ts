@@ -1,25 +1,27 @@
 declare global {
   namespace State {
-    type Report = {
+    export type Report = {
       id: string;
-      steps: Array<Step & { folded: boolean }>;
+      steps: Array<StepDiff & StepBase & { folded: boolean }>;
     };
 
-    type Step =
+    type StepDiff =
       | {
           type: "find";
           selector: string;
-          screenshot: string;
         }
       | {
           type: "click";
-          screenshot: string;
         }
       | {
           type: "type";
           text: string;
-          screenshot: string;
         };
+
+    type StepBase = {
+      screenshot: string;
+      logs: string[];
+    };
 
     type Epic = {
       url: string;
