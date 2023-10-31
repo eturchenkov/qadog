@@ -149,12 +149,21 @@ export const App = () => {
                       />
                       {step.logs.length > 0 && (
                         <div className="px-12 pb-4">
-                          {step.logs.map((log, i) => (
+                          {step.logs.map((log, li) => (
                             <span
-                              key={i}
-                              className="text-sm text-slate-400 line-clamp-1 hover:text-slate-300 cursor-pointer"
+                              key={li}
+                              className={cs(
+                                "text-sm text-slate-400 cursor-pointer",
+                                {
+                                  "line-clamp-1 hover:text-slate-300":
+                                    log.folded,
+                                }
+                              )}
+                              onClick={() =>
+                                mutateStore(M.toggleStepLog(si, li))
+                              }
                             >
-                              {log}
+                              {log.text}
                               <br />
                             </span>
                           ))}

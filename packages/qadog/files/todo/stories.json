@@ -1,1 +1,20 @@
-{"url":"http://localhost:3000","userGoal":"User makes a todo list","stories":[{"text":"User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list.","instructions":[{"steps":["[find] input field for task description","[type] task description","[find] \"ADD TODO\" button","[click] \"ADD TODO\" button"],"reports":[{"id":"talpyh4a3d","createdAt":1698680823407},{"id":"tftjsoa9ux","createdAt":1698680852022},{"id":"4ei4f06e39","createdAt":1698680886292},{"id":"dayivz29o2","createdAt":1698681332009}]}]}]}
+{
+  "url": "http://localhost:3000",
+  "userGoal": "User makes a todo list",
+  "stories": [
+    {
+      "text": "User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list.",
+      "instructions": [
+        {
+          "steps": [
+            "[find] input field for task description",
+            "[type] task description",
+            "[find] \"ADD TODO\" button",
+            "[click] \"ADD TODO\" button"
+          ],
+          "reports": []
+        }
+      ]
+    }
+  ]
+}

@@ -42,6 +42,10 @@ export const updateReport =
       steps: report.steps.map((step) => ({
         ...step,
         folded: true,
+        logs: step.logs.map((log) => ({
+          text: log,
+          folded: true,
+        })),
       })),
     },
   });
@@ -55,6 +59,25 @@ export const toggleReportStep =
       steps: store.report.steps.map((step, i) => ({
         ...step,
         folded: i === si ? !step.folded : step.folded,
+      })),
+    },
+  });
+
+export const toggleStepLog =
+  (si: number, li: number) =>
+  (store: Store): Store => ({
+    ...store,
+    report: {
+      ...store.report,
+      steps: store.report.steps.map((step, s_i) => ({
+        ...step,
+        logs:
+          s_i === si
+            ? step.logs.map((log, l_i) => ({
+                ...log,
+                folded: l_i === li ? !log.folded : log.folded,
+              }))
+            : step.logs,
       })),
     },
   });

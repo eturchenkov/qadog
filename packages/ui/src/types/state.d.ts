@@ -20,7 +20,7 @@ declare global {
 
     type StepBase = {
       screenshot: string;
-      logs: string[];
+      logs: Array<{ text: string; folded: boolean }>;
     };
 
     type Epic = {
