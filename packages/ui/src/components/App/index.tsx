@@ -5,6 +5,7 @@ import { service } from "@/service";
 import { useStore } from "@/store";
 import { Topbar } from "@/components/Topbar";
 import * as M from "@/store/mutations";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 let isMounted = false; // check if it needs for prod
 
@@ -34,31 +35,43 @@ export const App = () => {
                   <span className="px-2 py-1 mr-2 text-gray-200 bg-gray-700 rounded-lg">
                     url
                   </span>
-                  <span className="text-slate-400">{epic.url}</span>
+                  <input
+                    type="text"
+                    className="text-slate-400 bg-transparent focus:outline-none"
+                    value={epic.url}
+                  />
                 </p>
                 <p className="p-2 text-slate-400">
                   <span className="px-2 py-1 mr-2 text-gray-200 bg-gray-700 rounded-lg">
                     goal
                   </span>
-                  <span>{epic.userGoal}</span>
+                  <input
+                    type="text"
+                    className="text-slate-400 bg-transparent focus:outline-none"
+                    value={epic.userGoal}
+                  />
                 </p>
                 {epic.stories.map((story, si) => (
                   <div key={si} className="p-2">
-                    <p className="mb-4 p-3 text-slate-300 border border-slate-500 rounded-lg">
-                      {story.text}
-                    </p>
+                    <textarea
+                      className="p-3 w-full h-28 text-slate-300 border border-slate-500 rounded-lg bg-transparent focus:outline-none"
+                      value={story.text}
+                    />
                     {story.instructions.map((instruction, ii) => (
-                      <div key={ii} className="mt-4 pl-8">
-                        <p className="mb-4 p-2 pl-4 text-slate-400 border-l-2 border-purple-500">
-                          {instruction.steps.map((step, i) => (
-                            <span key={i}>
-                              {step}
-                              <br />
-                            </span>
-                          ))}
-                        </p>
+                      <div key={ii} className="mt-3 pl-8">
+                        <div className="mb-4 group/i text-slate-400">
+                          <p className="px-4 py-2 inline-block relative border-l-2 border-purple-500">
+                            {instruction.steps.map((step, i) => (
+                              <span key={i}>
+                                {step}
+                                <br />
+                              </span>
+                            ))}
+                            <TrashIcon className="h-5 w-5 absolute top-1/2 right-[-20px] hidden group-hover/i:block cursor-pointer" />
+                          </p>
+                        </div>
                         {instruction.reports.map((report, ri) => (
-                          <p key={ri} className="mb-4">
+                          <p key={ri} className="mb-4 group/r">
                             {!report.selected ? (
                               <span
                                 className="ml-6 px-3 py-1 font-medium text-gray-300 bg-gray-700 rounded-lg cursor-pointer"
@@ -79,6 +92,7 @@ export const App = () => {
                                 {reportName(report.createdAt)}
                               </span>
                             )}
+                            <TrashIcon className="ml-4 h-5 w-5 hidden align-top text-slate-400 group-hover/r:inline-block cursor-pointer" />
                           </p>
                         ))}
                         <button

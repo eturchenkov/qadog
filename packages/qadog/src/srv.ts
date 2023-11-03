@@ -2,7 +2,7 @@ require("dotenv").config();
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { readFile } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import { addInstruction } from "./instructor";
 import { addReport } from "./inspector";
 
@@ -14,6 +14,14 @@ app.use("/reports/", express.static("files/todo/reports"));
 
 app.get("/stories", async (_, res) => {
   const epic = await readFile(`files/todo/stories.json`, {
+    encoding: "utf8",
+  });
+  res.send(epic);
+});
+
+app.put("/stories", async (req, res) => {
+  const epic = req.body;
+  await writeFile(`files/todo/stories.json`, JSON.stringify(epic), {
     encoding: "utf8",
   });
   res.send(epic);
