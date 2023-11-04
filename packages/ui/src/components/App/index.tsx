@@ -1,16 +1,16 @@
 import { useEffect } from "react";
-import cs from "classnames";
-import { format } from "date-fns/esm/fp";
 import { service } from "@/service";
 import { useStore } from "@/store";
-import { Topbar } from "@/components/Topbar";
 import * as M from "@/store/mutations";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { Topbar } from "@/components/Topbar";
+import { EpicPanel } from "@/components/EpicPanel";
+import { Report } from "@/components/Report";
+import type { FC } from "react";
 
 let isMounted = false; // check if it needs for prod
 
-export const App = () => {
-  const { store, mutateStore } = useStore();
+export const App: FC = () => {
+  const { mutateStore } = useStore();
 
   useEffect(() => {
     if (!isMounted) {
@@ -21,181 +21,21 @@ export const App = () => {
     }
   }, []);
 
-  const { epic, report } = store;
-
   return (
     <div className="w-screen h-screen relative">
       <Topbar />
       <div className="w-full h-[calc(100vh-3.5rem)] flex">
         <div className="flex-1 grow-[1]">
           <div className="h-full text-left overflow-y-auto border-0 border-r-2 border-e-gray-900">
-            {epic !== null && (
-              <div className="p-4">
-                <p className="p-2">
-                  <span className="px-2 py-1 mr-2 text-gray-200 bg-gray-700 rounded-lg">
-                    url
-                  </span>
-                  <input
-                    type="text"
-                    className="text-slate-400 bg-transparent focus:outline-none"
-                    value={epic.url}
-                  />
-                </p>
-                <p className="p-2 text-slate-400">
-                  <span className="px-2 py-1 mr-2 text-gray-200 bg-gray-700 rounded-lg">
-                    goal
-                  </span>
-                  <input
-                    type="text"
-                    className="text-slate-400 bg-transparent focus:outline-none"
-                    value={epic.userGoal}
-                  />
-                </p>
-                {epic.stories.map((story, si) => (
-                  <div key={si} className="p-2">
-                    <textarea
-                      className="p-3 w-full h-28 text-slate-300 border border-slate-500 rounded-lg bg-transparent focus:outline-none"
-                      value={story.text}
-                    />
-                    {story.instructions.map((instruction, ii) => (
-                      <div key={ii} className="mt-3 pl-8">
-                        <div className="mb-4 group/i text-slate-400">
-                          <p className="px-4 py-2 inline-block relative border-l-2 border-purple-500">
-                            {instruction.steps.map((step, i) => (
-                              <span key={i}>
-                                {step}
-                                <br />
-                              </span>
-                            ))}
-                            <TrashIcon className="h-5 w-5 absolute top-1/2 right-[-20px] hidden group-hover/i:block cursor-pointer" />
-                          </p>
-                        </div>
-                        {instruction.reports.map((report, ri) => (
-                          <p key={ri} className="mb-4 group/r">
-                            {!report.selected ? (
-                              <span
-                                className="ml-6 px-3 py-1 font-medium text-gray-300 bg-gray-700 rounded-lg cursor-pointer"
-                                onClick={() =>
-                                  service
-                                    .getReport(report.id)
-                                    .then((report) =>
-                                      mutateStore(
-                                        M.updateReport(report, si, ii, ri)
-                                      )
-                                    )
-                                }
-                              >
-                                {reportName(report.createdAt)}
-                              </span>
-                            ) : (
-                              <span className="ml-6 px-3 py-1 font-medium text-gray-800 bg-teal-600 rounded-lg">
-                                {reportName(report.createdAt)}
-                              </span>
-                            )}
-                            <TrashIcon className="ml-4 h-5 w-5 hidden align-top text-slate-400 group-hover/r:inline-block cursor-pointer" />
-                          </p>
-                        ))}
-                        <button
-                          className="ml-6 btn btn-sm btn-outline btn-success normal-case"
-                          onClick={() =>
-                            service
-                              .addReport(si, ii)
-                              .then((epic) => mutateStore(M.updateEpic(epic)))
-                          }
-                        >
-                          Generate report
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      className="ml-8 mt-4 btn btn-sm btn-outline btn-primary normal-case"
-                      onClick={() =>
-                        service
-                          .addInstruction(si)
-                          .then((epic) => mutateStore(M.updateEpic(epic)))
-                      }
-                    >
-                      Generate instructions
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <EpicPanel />
           </div>
         </div>
         <div className="flex-1 grow-[2]">
           <div className="h-full text-left overflow-y-auto">
-            <div className="p-4 m-auto max-w-3xl">
-              {report.steps.map((step, si) => (
-                <div
-                  key={si}
-                  className="mb-4 border border-slate-500 rounded-lg"
-                >
-                  <p
-                    className="p-2 relative cursor-pointer"
-                    onClick={() => mutateStore(M.toggleReportStep(si))}
-                  >
-                    <span
-                      className={cs(
-                        "mr-2 py-0.5 px-2 text-sm font-normal text-gray-300 rounded-lg",
-                        {
-                          "bg-pink-900": step.type === "find",
-                          "bg-fuchsia-900": step.type === "click",
-                          "bg-indigo-900": step.type === "type",
-                        }
-                      )}
-                    >
-                      {step.type}
-                    </span>
-                    {step.logs.length > 0 && (
-                      <span className="py-0.5 px-2 absolute right-2 text-sm font-normal text-gray-300 bg-sky-900 rounded-lg">
-                        {step.logs.length} log{step.logs.length > 1 && "s"}
-                      </span>
-                    )}
-                    {step.type === "find" && <span>{step.selector}</span>}
-                    {step.type === "type" && <span>{step.text}</span>}
-                  </p>
-                  {!step.folded && (
-                    <div>
-                      <img
-                        className="w-4/5 m-auto p-4"
-                        src={`http://localhost:5000/reports/${report.id}/${step.screenshot}`}
-                      />
-                      {step.logs.length > 0 && (
-                        <div className="px-12 pb-4">
-                          {step.logs.map((log, li) => (
-                            <span
-                              key={li}
-                              className={cs(
-                                "text-sm text-slate-400 cursor-pointer",
-                                {
-                                  "line-clamp-1 hover:text-slate-300":
-                                    log.folded,
-                                }
-                              )}
-                              onClick={() =>
-                                mutateStore(M.toggleStepLog(si, li))
-                              }
-                            >
-                              {log.text}
-                              <br />
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <Report />
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-const dateFormat = format("HH:mm:ss MMM d");
-const reportName = (date: number) => `Report - ${dateFormat(date)}`;
-
-export default App;
