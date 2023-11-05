@@ -2,7 +2,7 @@ import type { Epic } from "@/types/epic";
 import type { Report } from "@/types/report";
 import type { Store } from "@/types/store";
 
-export const updateEpic =
+export const setEpic =
   (epic: Epic) =>
   (store: Store): Store => ({
     ...store,
@@ -21,7 +21,14 @@ export const updateEpic =
     },
   });
 
-export const updateReport =
+export const updateEpic =
+  (epic: State.Epic, cleanReport?: boolean) =>
+  (store: Store): Store => ({
+    epic,
+    report: cleanReport ? { id: "", steps: [] } : store.report,
+  });
+
+export const setReport =
   (report: Report, si: number, ii: number, ri: number) =>
   (store: Store): Store => ({
     epic: {

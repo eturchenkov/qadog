@@ -1,11 +1,14 @@
+import { service } from "@/service";
 import { useState, useEffect } from "react";
 import { useStore } from "@/store";
+import * as M from "@/store/mutations";
 import { Story } from "@/components/Story";
 import type { FC } from "react";
 
 export const EpicPanel: FC = () => {
   const {
     store: { epic },
+    mutateStore,
   } = useStore();
   const [url, setUrl] = useState<string>("");
   const [goal, setGoal] = useState<string>("");
@@ -26,6 +29,13 @@ export const EpicPanel: FC = () => {
           className="text-slate-400 bg-transparent focus:outline-none"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
+          onBlur={() => {
+            if (url !== epic.url) {
+              const nextEpic = { ...epic, url };
+              mutateStore(M.updateEpic(nextEpic));
+              service.updateEpic(nextEpic);
+            }
+          }}
         />
       </p>
       <p className="p-2 text-slate-400">
@@ -37,6 +47,13 @@ export const EpicPanel: FC = () => {
           className="text-slate-400 bg-transparent focus:outline-none"
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
+          onBlur={() => {
+            if (goal !== epic.userGoal) {
+              const nextEpic = { ...epic, userGoal: goal };
+              mutateStore(M.updateEpic(nextEpic));
+              service.updateEpic(nextEpic);
+            }
+          }}
         />
       </p>
       {epic.stories.map((_, si) => (

@@ -42,7 +42,7 @@ export const inspectStory = async (
   const epic = JSON.parse(data) as Epic;
   const instructions = epic.stories[si].instructions[ii].steps;
 
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   await page.setViewport({ width: 1080, height: 800 });
   let logs: string[] = [];

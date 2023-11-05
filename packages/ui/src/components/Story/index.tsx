@@ -8,7 +8,8 @@ import type { FC } from "react";
 
 export const Story: FC<{ si: number }> = ({ si }) => {
   const { store, mutateStore } = useStore();
-  const story = store.epic.stories[si];
+  const epic = store.epic;
+  const story = epic.stories[si];
   const [text, setText] = useState<string>("");
 
   useEffect(() => {
@@ -21,6 +22,18 @@ export const Story: FC<{ si: number }> = ({ si }) => {
         className="p-3 w-full h-28 text-slate-300 border border-slate-500 rounded-lg bg-transparent focus:outline-none"
         value={text}
         onChange={(e) => setText(e.target.value)}
+        onBlur={() => {
+          if (text !== story.text) {
+            const nextEpic = {
+              ...epic,
+              stories: epic.stories.map((story, i) =>
+                i === si ? { ...story, text } : story
+              ),
+            };
+            mutateStore(M.updateEpic(nextEpic));
+            service.updateEpic(nextEpic);
+          }
+        }}
       />
       {story.instructions.map((instruction, ii) => (
         <div key={ii} className="mt-3 pl-8">
@@ -32,7 +45,21 @@ export const Story: FC<{ si: number }> = ({ si }) => {
                   <br />
                 </span>
               ))}
-              <TrashIcon className="h-5 w-5 absolute top-1/2 right-[-20px] hidden group-hover/i:block cursor-pointer" />
+              <TrashIcon
+                className="h-5 w-5 absolute top-1/2 right-[-20px] hidden group-hover/i:block cursor-pointer"
+                onClick={() => {
+                  const nextEpic = removeInstruction(epic, si, ii);
+                  mutateStore(
+                    M.updateEpic(
+                      nextEpic,
+                      story.instructions.some((i) =>
+                        i.reports.some((r) => r.selected)
+                      )
+                    )
+                  );
+                  service.updateEpic(nextEpic);
+                }}
+              />
             </p>
           </div>
           {instruction.reports.map((report, ri) => (
@@ -44,7 +71,7 @@ export const Story: FC<{ si: number }> = ({ si }) => {
                     service
                       .getReport(report.id)
                       .then((report) =>
-                        mutateStore(M.updateReport(report, si, ii, ri))
+                        mutateStore(M.setReport(report, si, ii, ri))
                       )
                   }
                 >
@@ -55,7 +82,19 @@ export const Story: FC<{ si: number }> = ({ si }) => {
                   {reportName(report.createdAt)}
                 </span>
               )}
-              <TrashIcon className="ml-4 h-5 w-5 hidden align-top text-slate-400 group-hover/r:inline-block cursor-pointer" />
+              <TrashIcon
+                className="ml-4 h-5 w-5 hidden align-top text-slate-400 group-hover/r:inline-block cursor-pointer"
+                onClick={() => {
+                  const nextEpic = removeReport(epic, si, ii, ri);
+                  mutateStore(
+                    M.updateEpic(
+                      nextEpic,
+                      instruction.reports.some((r) => r.selected)
+                    )
+                  );
+                  service.updateEpic(nextEpic);
+                }}
+              />
             </p>
           ))}
           <button
@@ -63,7 +102,7 @@ export const Story: FC<{ si: number }> = ({ si }) => {
             onClick={() =>
               service
                 .addReport(si, ii)
-                .then((epic) => mutateStore(M.updateEpic(epic)))
+                .then((epic) => mutateStore(M.setEpic(epic)))
             }
           >
             Generate report
@@ -75,7 +114,7 @@ export const Story: FC<{ si: number }> = ({ si }) => {
         onClick={() =>
           service
             .addInstruction(si)
-            .then((epic) => mutateStore(M.updateEpic(epic)))
+            .then((epic) => mutateStore(M.setEpic(epic)))
         }
       >
         Generate instructions
@@ -86,3 +125,43 @@ export const Story: FC<{ si: number }> = ({ si }) => {
 
 const dateFormat = format("HH:mm:ss MMM d");
 const reportName = (date: number) => `Report - ${dateFormat(date)}`;
+
+const removeInstruction = (
+  epic: State.Epic,
+  si: number,
+  ii: number
+): State.Epic => ({
+  ...epic,
+  stories: epic.stories.map((story, i) =>
+    i === si
+      ? {
+          ...story,
+          instructions: story.instructions.filter((_, i_i) => i_i !== ii),
+        }
+      : story
+  ),
+});
+
+const removeReport = (
+  epic: State.Epic,
+  si: number,
+  ii: number,
+  ri: number
+): State.Epic => ({
+  ...epic,
+  stories: epic.stories.map((story, s_i) =>
+    s_i === si
+      ? {
+          ...story,
+          instructions: story.instructions.map((instruction, i_i) =>
+            i_i === ii
+              ? {
+                  ...instruction,
+                  reports: instruction.reports.filter((_, r_i) => r_i !== ri),
+                }
+              : instruction
+          ),
+        }
+      : story
+  ),
+});

@@ -16,7 +16,7 @@ export const App: FC = () => {
     if (!isMounted) {
       isMounted = true;
       service.getEpic().then((epic) => {
-        mutateStore(M.updateEpic(epic));
+        mutateStore(M.setEpic(epic));
       });
     }
   }, []);
