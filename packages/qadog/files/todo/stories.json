@@ -1,1 +1,10 @@
-{"url":"http://localhost:3000","userGoal":"User makes a todo list","stories":[{"text":"User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list.","instructions":[]}]}
+{
+  "url": "http://localhost:3000",
+  "userGoal": "User makes a todo list",
+  "stories": [
+    {
+      "text": "User can add new task to todo list. User types task description to input field, then press button \"ADD TODO\". New task should be appear in todo list.",
+      "instructions": []
+    }
+  ]
+}

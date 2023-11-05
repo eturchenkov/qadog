@@ -10,7 +10,7 @@ const findQuery = async (
   body: string,
   instruction: string
 ): Promise<string> => {
-  const response = await gpt(
+  let response = await gpt(
     `You are HTML DOM element finder.
 You have a html body:
 -----
@@ -26,7 +26,11 @@ Response should be a one line.
 `,
     0.3
   );
-  console.log(`find response: ${response}`);
+  if (response.startsWith("document.querySelector")) {
+    response = response.replace("document.querySelector", "");
+    response = response.replace(/["'()]/g, ""); // todo: rewrite it
+  }
+  console.log(`[response] ${response}`);
   return response;
 };
 
